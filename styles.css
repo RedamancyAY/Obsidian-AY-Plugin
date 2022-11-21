@@ -9,6 +9,8 @@ If your plugin does not need CSS, delete this file.
 
 .theme-light{
     --text-bg-pink-fontcolor: black;
+    --text-bg-green-fontcolor: black;
+    --text-bg-purple-fontcolor: black;
 }
 
 .theme-dark{
