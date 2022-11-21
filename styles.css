@@ -6,3 +6,28 @@ available in the app when your plugin is enabled.
 If your plugin does not need CSS, delete this file.
 
 */
+
+.theme-light{
+    --text-bg-pink-fontcolor: black;
+}
+
+.theme-dark{
+    --text-bg-pink-fontcolor: black;
+    --text-bg-green-fontcolor: black;
+    --text-bg-purple-fontcolor: black;
+}
+
+
+
+.text-bg-pink {
+    background-color: #ffa7c1;
+    color: var(--text-bg-pink-fontcolor)!important;
+}
+.text-bg-green {
+    background-color: #52FFA2;
+    color: var(--text-bg-green-fontcolor)!important;
+}
+.text-bg-purple {
+    background-color: #CDA7FF;
+    color: var(--text-bg-purple-fontcolor)!important;
+}
