@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-AY-plugin1",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "自用插件",
 	"main": "main.js",
 	"scripts": {
