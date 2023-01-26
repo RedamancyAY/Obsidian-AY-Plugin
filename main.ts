@@ -1,17 +1,10 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { Editor, MarkdownView, Notice, Plugin, TFile, TAbstractFile } from 'obsidian';
+import { SettingTab, PluginSettings, DEFAULT_SETTINGS } from "./settings/settings";
+import { debugLog, path, isImage } from 'utils/utils';
 
-// Remember to rename these classes and interfaces!
-
-interface MyPluginSettings {
-	mySetting: string;
-}
-
-const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: 'default'
-}
 
 export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+	settings: PluginSettings;
 
 	async onload() {
 		await this.loadSettings();
@@ -28,15 +21,12 @@ export default class MyPlugin extends Plugin {
 		const statusBarItemEl = this.addStatusBarItem();
 		statusBarItemEl.setText('Status Bar Text');
 
-		// This adds a simple command that can be triggered anywhere
-		// this.addCommand({
-		// 	id: 'open-sample-modal-simple',
-		// 	name: 'Open sample modal (simple)',
-		// 	callback: () => {
-		// 		new SampleModal(this.app).open();
-		// 	}
-		// });π
-		// This adds an editor command that can perform some operation on the current editor instance
+		// 0-设置面板
+		this.addSettingTab(new SettingTab(this.app, this));
+
+
+
+		// 1. set color for selected text
 		this.addCommand({
 			id: 'text-background-pink',
 			name: '改变文字背景颜色为➡️粉色',
@@ -44,10 +34,10 @@ export default class MyPlugin extends Plugin {
 				const selection = editor.getSelection();
 				const pre_str = '<span class="text-bg-pink">'
 				const back_str = '</span>'
-				if (selection.length > 0){
-				editor.replaceSelection(pre_str + selection + back_str);
+				if (selection.length > 0) {
+					editor.replaceSelection(pre_str + selection + back_str);
 				}
-				else{
+				else {
 					new Notice('You didn\'t select any text!');
 				}
 			}
@@ -59,10 +49,10 @@ export default class MyPlugin extends Plugin {
 				const selection = editor.getSelection();
 				const pre_str = '<span class="text-bg-green">'
 				const back_str = '</span>'
-				if (selection.length > 0){
-				editor.replaceSelection(pre_str + selection + back_str);
+				if (selection.length > 0) {
+					editor.replaceSelection(pre_str + selection + back_str);
 				}
-				else{
+				else {
 					new Notice('You didn\'t select any text!');
 				}
 			}
@@ -74,43 +64,46 @@ export default class MyPlugin extends Plugin {
 				const selection = editor.getSelection();
 				const pre_str = '<span class="text-bg-purple">'
 				const back_str = '</span>'
-				if (selection.length > 0){
-				editor.replaceSelection(pre_str + selection + back_str);
+				if (selection.length > 0) {
+					editor.replaceSelection(pre_str + selection + back_str);
 				}
-				else{
+				else {
 					new Notice('You didn\'t select any text!');
 				}
 			}
 		});
 
-		// This adds a complex command that can check whether the current state of the app allows execution of the command
-		// this.addCommand({
-		// 	id: 'open-sample-modal-complex',
-		// 	name: 'Open sample modal (complex)',
-		// 	checkCallback: (checking: boolean) => {
-		// 		// Conditions to check
-		// 		const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
-		// 		if (markdownView) {
-		// 			// If checking is true, we're simply "checking" if the command can be run.
-		// 			// If checking is false, then we want to actually perform the operation.
-		// 			if (!checking) {
-		// 				new SampleModal(this.app).open();
-		// 			}
-
-		// 			// This command will only show up in Command Palette when the check function returns true
-		// 			return true;
-		// 		}
-		// 	}
-		// });
-
-		// This adds a settings tab so the user can configure various aspects of the plugin
-		this.addSettingTab(new SampleSettingTab(this.app, this));
-
 		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
 		// Using this function will automatically remove the event listener when this plugin is disabled.
-		this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
-			console.log('click', evt);
-		});
+		// this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
+		// 	console.log('click', evt);
+		// });
+
+
+		this.registerEvent(
+			this.app.vault.on('create', (file) => {
+				if (!(file instanceof TFile))
+					return
+
+				const timeGapMs = Date.now() - file.stat.ctime;
+				// if the pasted file is created more than 1 second ago, ignore it
+				if (timeGapMs > 1000)
+					return
+
+				if (isImage(file)) {
+					debugLog('pasted image: ', file)
+					this.move_files(file, this.settings.img_folder);
+				}
+				else if (file.extension.toLowerCase() == "html"){
+					debugLog('pasted html: ', file)
+					this.move_files(file, this.settings.html_folder);
+				}
+				else if (file.extension.toLowerCase() == "pdf"){
+					debugLog('pasted PDF: ', file)
+					this.move_files(file, this.settings.pdf_folder);
+				}
+			})
+		)
 
 		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
 		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
@@ -123,53 +116,22 @@ export default class MyPlugin extends Plugin {
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 	}
-
 	async saveSettings() {
 		await this.saveData(this.settings);
 	}
-}
 
-class SampleModal extends Modal {
-	constructor(app: App) {
-		super(app);
-	}
-
-	onOpen() {
-		const {contentEl} = this;
-		contentEl.setText('Woah!');
-	}
-
-	onClose() {
-		const {contentEl} = this;
-		contentEl.empty();
+	async move_files(file: TFile, folder: string) {
+		const new_path = path.join(folder, file.name)
+		console.log(file.name, file.parent.path, new_path);
+		try {
+			await this.app.vault.rename(file, new_path);
+		}
+		catch (err) {
+			new Notice(`Failed to move ${this.settings.img_folder}: ${err}`)
+			throw err
+		}
+		new Notice(`Move ${file.name} to ${new_path}`)
 	}
 }
 
-class SampleSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
 
-	constructor(app: App, plugin: MyPlugin) {
-		super(app, plugin);
-		this.plugin = plugin;
-	}
-
-	display(): void {
-		const {containerEl} = this;
-
-		containerEl.empty();
-
-		containerEl.createEl('h2', {text: 'Settings for my awesome plugin.'});
-
-		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
-			.addText(text => text
-				.setPlaceholder('Enter your secret')
-				.setValue(this.plugin.settings.mySetting)
-				.onChange(async (value) => {
-					console.log('Secret: ' + value);
-					this.plugin.settings.mySetting = value;
-					await this.plugin.saveSettings();
-				}));
-	}
-}

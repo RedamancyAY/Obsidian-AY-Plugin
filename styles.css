@@ -33,3 +33,9 @@ If your plugin does not need CSS, delete this file.
     background-color: #CDA7FF;
     color: var(--text-bg-purple-fontcolor)!important;
 }
+
+
+
+.SettingTab_folder_search {
+    width: calc(100% - 20px);
+}
