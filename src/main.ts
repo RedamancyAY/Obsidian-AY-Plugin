@@ -1,6 +1,6 @@
 import { Editor, MarkdownView, Notice, Plugin, TFile, TAbstractFile } from 'obsidian';
 import { SettingTab, PluginSettings, DEFAULT_SETTINGS } from "./settings/settings";
-import { debugLog, path, isImage } from 'utils/utils';
+import { debugLog, path, isImage } from './utils/utils';
 
 
 export default class MyPlugin extends Plugin {
@@ -94,11 +94,11 @@ export default class MyPlugin extends Plugin {
 					debugLog('pasted image: ', file)
 					this.move_files(file, this.settings.img_folder);
 				}
-				else if (file.extension.toLowerCase() == "html"){
+				else if (file.extension.toLowerCase() == "html") {
 					debugLog('pasted html: ', file)
 					this.move_files(file, this.settings.html_folder);
 				}
-				else if (file.extension.toLowerCase() == "pdf"){
+				else if (file.extension.toLowerCase() == "pdf") {
 					debugLog('pasted PDF: ', file)
 					this.move_files(file, this.settings.pdf_folder);
 				}
