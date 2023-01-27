@@ -19,7 +19,7 @@ export const DEFAULT_SETTINGS: Partial<PluginSettings> = {
 
 export class SettingTab extends PluginSettingTab {
     plugin: MyPlugin;
-
+    
     constructor(app: App, plugin: MyPlugin) {
         super(app, plugin);
         this.plugin = plugin;
@@ -56,7 +56,7 @@ export class SettingTab extends PluginSettingTab {
             .setName("PDF files")
             .setDesc("Default folder")
             .addSearch((cb) => {
-                new FolderSuggest(cb.inputEl);
+                new FolderSuggest(this.app, cb.inputEl);
                 cb.setPlaceholder("Example: folder1/folder2")
                     .setValue(this.plugin.settings.pdf_folder)
                     .onChange((new_folder) => {
@@ -70,7 +70,7 @@ export class SettingTab extends PluginSettingTab {
             .setName("HTML files")
             .setDesc("Default folder")
             .addSearch((cb) => {
-                new FolderSuggest(cb.inputEl);
+                new FolderSuggest(this.app, cb.inputEl);
                 cb.setPlaceholder("Example: folder1/folder2")
                     .setValue(this.plugin.settings.html_folder)
                     .onChange((new_folder) => {
@@ -84,7 +84,7 @@ export class SettingTab extends PluginSettingTab {
             .setName("Image files")
             .setDesc("Default folder")
             .addSearch((cb) => {
-                new FolderSuggest(cb.inputEl);
+                new FolderSuggest(this.app, cb.inputEl);
                 cb.setPlaceholder("Example: folder1/folder2")
                     .setValue(this.plugin.settings.img_folder)
                     .onChange((new_folder) => {

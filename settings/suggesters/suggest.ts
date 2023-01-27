@@ -1,6 +1,11 @@
 import { createPopper, type Instance as PopperInstance } from "@popperjs/core";
 import { App, type ISuggestOwner, Scope } from "obsidian";
 
+const wrapAround = (value: number, size: number): number => {
+    return ((value % size) + size) % size;
+};
+
+
 class Suggest<T> {
     private owner: ISuggestOwner<T>;
     private values: T[];
