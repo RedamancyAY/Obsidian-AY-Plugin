@@ -52,16 +52,14 @@ export const path = {
 		return sp[sp.length - 1]
 	},
 
-	filename(fullpath:string):string
-	{
+	filename(fullpath: string): string {
 		let filename = basename(fullpath);
-
-		return filename.substring(0,filename.indexOf('.') )
+		return filename.substring(0, filename.indexOf('.'))
 	},
 
 	// return extension without dot, e.g. 'jpg'
-	extension(fullpath: string): string {
-		const positions = [...fullpath.matchAll(new RegExp('\\.', 'gi'))].map(a => a.index)
-		return fullpath.slice(positions[positions.length - 1] + 1)
-	},
+	// extension(fullpath: string): string {
+	// 	const positions = [...fullpath.matchAll(new RegExp('\\.', 'gi'))].map(a => a.index)
+	// 	return fullpath.slice(positions[positions.length - 1] + 1);
+	// },
 }

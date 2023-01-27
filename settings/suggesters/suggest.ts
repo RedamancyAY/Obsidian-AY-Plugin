@@ -1,11 +1,5 @@
-// Credits go to Liam's Periodic Notes Plugin: https://github.com/liamcain/obsidian-periodic-notes
-
-import { ISuggestOwner, Scope } from "obsidian";
-import { createPopper, Instance as PopperInstance } from "@popperjs/core";
-
-const wrapAround = (value: number, size: number): number => {
-    return ((value % size) + size) % size;
-};
+import { createPopper, type Instance as PopperInstance } from "@popperjs/core";
+import { App, type ISuggestOwner, Scope } from "obsidian";
 
 class Suggest<T> {
     private owner: ISuggestOwner<T>;
@@ -14,19 +8,11 @@ class Suggest<T> {
     private selectedItem: number;
     private containerEl: HTMLElement;
 
-    constructor(
-        owner: ISuggestOwner<T>,
-        containerEl: HTMLElement,
-        scope: Scope
-    ) {
+    constructor(owner: ISuggestOwner<T>, containerEl: HTMLElement, scope: Scope) {
         this.owner = owner;
         this.containerEl = containerEl;
 
-        containerEl.on(
-            "click",
-            ".suggestion-item",
-            this.onSuggestionClick.bind(this)
-        );
+        containerEl.on("click", ".suggestion-item", this.onSuggestionClick.bind(this));
         containerEl.on(
             "mousemove",
             ".suggestion-item",
@@ -91,10 +77,7 @@ class Suggest<T> {
     }
 
     setSelectedItem(selectedIndex: number, scrollIntoView: boolean) {
-        const normalizedIndex = wrapAround(
-            selectedIndex,
-            this.suggestions.length
-        );
+        const normalizedIndex = wrapAround(selectedIndex, this.suggestions.length);
         const prevSelectedSuggestion = this.suggestions[this.selectedItem];
         const selectedSuggestion = this.suggestions[normalizedIndex];
 
@@ -110,14 +93,16 @@ class Suggest<T> {
 }
 
 export abstract class TextInputSuggest<T> implements ISuggestOwner<T> {
-    protected inputEl: HTMLInputElement | HTMLTextAreaElement;
+    protected app: App;
+    protected inputEl: HTMLInputElement;
 
     private popper: PopperInstance;
     private scope: Scope;
     private suggestEl: HTMLElement;
     private suggest: Suggest<T>;
 
-    constructor(inputEl: HTMLInputElement | HTMLTextAreaElement) {
+    constructor(app: App, inputEl: HTMLInputElement) {
+        this.app = app;
         this.inputEl = inputEl;
         this.scope = new Scope();
 
@@ -130,34 +115,25 @@ export abstract class TextInputSuggest<T> implements ISuggestOwner<T> {
         this.inputEl.addEventListener("input", this.onInputChanged.bind(this));
         this.inputEl.addEventListener("focus", this.onInputChanged.bind(this));
         this.inputEl.addEventListener("blur", this.close.bind(this));
-        this.suggestEl.on(
-            "mousedown",
-            ".suggestion-container",
-            (event: MouseEvent) => {
-                event.preventDefault();
-            }
-        );
+        this.suggestEl.on("mousedown", ".suggestion-container", (event: MouseEvent) => {
+            event.preventDefault();
+        });
     }
 
     onInputChanged(): void {
         const inputStr = this.inputEl.value;
         const suggestions = this.getSuggestions(inputStr);
 
-        if (!suggestions) {
-            this.close();
-            return;
-        }
         if (suggestions.length > 0) {
             this.suggest.setSuggestions(suggestions);
-            this.open(app.dom.appContainerEl, this.inputEl);
-        } else {
-            this.close();
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            this.open((<any>this.app).dom.appContainerEl, this.inputEl);
         }
     }
 
     open(container: HTMLElement, inputEl: HTMLElement): void {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        app.keymap.pushScope(this.scope);
+        (<any>this.app).keymap.pushScope(this.scope);
 
         container.appendChild(this.suggestEl);
         this.popper = createPopper(inputEl, this.suggestEl, {
@@ -186,10 +162,11 @@ export abstract class TextInputSuggest<T> implements ISuggestOwner<T> {
     }
 
     close(): void {
-        app.keymap.popScope(this.scope);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (<any>this.app).keymap.popScope(this.scope);
 
         this.suggest.setSuggestions([]);
-        if (this.popper) this.popper.destroy();
+        this.popper.destroy();
         this.suggestEl.detach();
     }
 
