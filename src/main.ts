@@ -146,7 +146,13 @@ export default class MyPlugin extends Plugin {
 			for (let i = 0; i <= folderListItems.length - 1; i++) {
 				// 3.1 获取当前的文件夹名
 				const cur_folder = folderListItems[i].querySelector(".nav-folder-title");
+				if (!cur_folder){
+					continue;
+				}
 				const cur_folder_name = cur_folder.getAttribute("data-path");
+				if (!cur_folder_name){
+					continue;
+				}
 				// console.log(cur_folder_name);
 
 				// 3.2 判断当前文件夹是否在设置里，是的话，就添加分割线
@@ -155,6 +161,9 @@ export default class MyPlugin extends Plugin {
 					if (!hrElement) {
 						const newHrElement = document.createElement("hr");
 						newHrElement.classList.add("folder-separator-before");
+						if (!folderListItems[i].parentNode){
+							continue;
+						}
 						folderListItems[i].parentNode.insertBefore(newHrElement, folderListItems[i]);
 					}
 				}
