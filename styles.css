@@ -7,13 +7,13 @@ If your plugin does not need CSS, delete this file.
 
 */
 
-.theme-light{
+.theme-light {
     --text-bg-pink-fontcolor: black;
     --text-bg-green-fontcolor: black;
     --text-bg-purple-fontcolor: black;
 }
 
-.theme-dark{
+.theme-dark {
     --text-bg-pink-fontcolor: black;
     --text-bg-green-fontcolor: black;
     --text-bg-purple-fontcolor: black;
@@ -23,19 +23,37 @@ If your plugin does not need CSS, delete this file.
 
 .text-bg-pink {
     background-color: #ffa7c1;
-    color: var(--text-bg-pink-fontcolor)!important;
+    color: var(--text-bg-pink-fontcolor) !important;
 }
+
 .text-bg-green {
     background-color: #52FFA2;
-    color: var(--text-bg-green-fontcolor)!important;
+    color: var(--text-bg-green-fontcolor) !important;
 }
+
 .text-bg-purple {
     background-color: #CDA7FF;
-    color: var(--text-bg-purple-fontcolor)!important;
+    color: var(--text-bg-purple-fontcolor) !important;
 }
 
 
 
 .SettingTab_folder_search {
     width: calc(100% - 20px);
+}
+
+
+
+
+.folder-separator-before {
+    margin: 0.5em 0;
+    border: none;
+    border-top: 1px solid gray;
+    width: 100%;
+}
+.folder-separator-after {
+    margin: 0.5em 0;
+    border: none;
+    border-top: 1px solid gray;
+    width: 100%;
 }

@@ -9,6 +9,8 @@ export default class MyPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
+
+
 		// This creates an icon in the left ribbon.
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
 			// Called when the user clicks the icon.
@@ -23,7 +25,7 @@ export default class MyPlugin extends Plugin {
 
 		// 0-设置面板
 		this.addSettingTab(new SettingTab(this.app, this));
-
+		this.add_folder_sep();
 
 
 		// 1. set color for selected text
@@ -72,12 +74,6 @@ export default class MyPlugin extends Plugin {
 				}
 			}
 		});
-
-		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
-		// Using this function will automatically remove the event listener when this plugin is disabled.
-		// this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
-		// 	console.log('click', evt);
-		// });
 
 
 		this.registerEvent(
@@ -131,6 +127,47 @@ export default class MyPlugin extends Plugin {
 			throw err
 		}
 		new Notice(`Move ${file.name} to ${new_path}`)
+	}
+	async add_folder_sep(){
+		// 1. 首先删除所有的分割线
+		let elements = document.querySelectorAll("[class^=folder-separator-]");
+		for (let i = 0; i < elements.length; i++) {
+			elements[i].remove();
+		}
+
+		// 2. 从设置中，读取要添加分割线的文件夹名
+		const folders_sep_before = this.settings.folder_sep_before.split(',');
+		const folders_sep_after = this.settings.folder_sep_after.split(',');
+
+		// 3. 给文件夹加分割线
+		const fileExplorer = document.querySelector(".nav-folder-children");
+		if (fileExplorer) {
+			const folderListItems = fileExplorer.querySelectorAll(".nav-folder-children > .nav-folder");
+			for (let i = 0; i <= folderListItems.length - 1; i++) {
+				// 3.1 获取当前的文件夹名
+				const cur_folder = folderListItems[i].querySelector(".nav-folder-title");
+				const cur_folder_name = cur_folder.getAttribute("data-path");
+				// console.log(cur_folder_name);
+
+				// 3.2 判断当前文件夹是否在设置里，是的话，就添加分割线
+				if (folders_sep_before.includes(cur_folder_name)) {
+					const hrElement = folderListItems[i].querySelector(".folder-separator-before");
+					if (!hrElement) {
+						const newHrElement = document.createElement("hr");
+						newHrElement.classList.add("folder-separator-before");
+						folderListItems[i].parentNode.insertBefore(newHrElement, folderListItems[i]);
+					}
+				}
+				if (folders_sep_after.includes(cur_folder_name)) {
+					const hrElement = folderListItems[i].querySelector(".folder-separator-after");
+					if (!hrElement) {
+						const newHrElement = document.createElement("hr");
+						newHrElement.classList.add("folder-separator-after");
+						folderListItems[i].append(newHrElement);
+					}
+				}
+			}
+		}
 	}
 }
 
