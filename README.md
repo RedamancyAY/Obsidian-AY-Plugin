@@ -18,4 +18,5 @@
 
 <center><img src="https://cdn.jsdelivr.net/gh/RedamancyAY/CloudImage@main/img/202302222054785.png" width="600"/></center>
 
-调整css类：`.folder-separator-before`和`.folder-separator-after`即可分别调整上下分割线的样式。
+* 输入框输入多个值，用英文逗号分开即可（注意不要有空格）。
+* 调整css类：`.folder-separator-before`和`.folder-separator-after`即可分别调整上下分割线的样式。
