@@ -157,9 +157,7 @@ export default class MyPlugin extends Plugin {
 					if (!hrElement) {
 						const newHrElement = document.createElement("hr");
 						newHrElement.classList.add("folder-separator-before");
-						if (folderListItems[i].parentNode) {
-							folderListItems[i].parentNode.insertBefore(newHrElement, folderListItems[i]);
-						}
+						folderListItems[i].parentNode?.insertBefore(newHrElement, folderListItems[i]);
 					}
 				}
 				if (folders_sep_after.includes(cur_folder_name)) {
