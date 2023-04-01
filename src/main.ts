@@ -1,6 +1,7 @@
 import { Editor, MarkdownView, Notice, Plugin, TFile, TAbstractFile } from 'obsidian';
 import { SettingTab, PluginSettings, DEFAULT_SETTINGS } from "./settings/settings";
-import { debugLog, path, isImage } from './utils/utils';
+import { debugLog, path} from './utils/utils';
+import { isImage, isVideo, isAudio } from './utils/check_attachments';
 
 
 export default class MyPlugin extends Plugin {
@@ -97,6 +98,14 @@ export default class MyPlugin extends Plugin {
 				else if (file.extension.toLowerCase() == "pdf") {
 					debugLog('pasted PDF: ', file)
 					this.move_files(file, this.settings.pdf_folder);
+				}
+				else if (isAudio(file)){
+					debugLog('pasted audio: ', file)
+					this.move_files(file, this.settings.audio_folder);
+				}
+				else if (isVideo(file)){
+					debugLog('pasted video: ', file)
+					this.move_files(file, this.settings.video_folder);
 				}
 			})
 		)

@@ -1,4 +1,3 @@
-import { TFile, TAbstractFile } from 'obsidian';
 import { basename } from 'path';
 
 export const DEBUG = !(process.env.BUILD_ENV === 'production')
@@ -9,18 +8,6 @@ export function debugLog(...args: any[]) {
 	}
 }
 
-const IMAGE_EXTS = [
-	'jpg', 'jpeg', 'png'
-]
-
-export function isImage(file: TAbstractFile): boolean {
-	if (file instanceof TFile) {
-		if (IMAGE_EXTS.contains(file.extension.toLowerCase())) {
-			return true
-		}
-	}
-	return false
-}
 
 export const path = {
 	// Credit: @creationix/path.js

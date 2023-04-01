@@ -7,6 +7,8 @@ export interface PluginSettings {
     pdf_folder: string;
     html_folder: string;
     img_folder: string;
+    audio_folder: string;
+    video_folder: string;
     folder_sep_before: string;
     folder_sep_after: string;
 }
@@ -16,6 +18,8 @@ export const DEFAULT_SETTINGS: Partial<PluginSettings> = {
     pdf_folder: "",
     html_folder: "",
     img_folder: "",
+    audio_folder: "",
+    video_folder: "",
     folder_sep_before: "",
     folder_sep_after: ""
 };
@@ -94,6 +98,34 @@ export class SettingTab extends PluginSettingTab {
                     .setValue(this.plugin.settings.img_folder)
                     .onChange((new_folder) => {
                         this.plugin.settings.img_folder = new_folder;
+                        this.plugin.saveSettings();
+                    });
+                // @ts-ignore
+                cb.containerEl.addClass("SettingTab_folder_search");
+            });
+        new Setting(this.containerEl)
+            .setName("Audio files")
+            .setDesc("Default folder")
+            .addSearch((cb) => {
+                new FolderSuggest(this.app, cb.inputEl);
+                cb.setPlaceholder("Example: folder1/folder2")
+                    .setValue(this.plugin.settings.audio_folder)
+                    .onChange((new_folder) => {
+                        this.plugin.settings.audio_folder = new_folder;
+                        this.plugin.saveSettings();
+                    });
+                // @ts-ignore
+                cb.containerEl.addClass("SettingTab_folder_search");
+            });
+        new Setting(this.containerEl)
+            .setName("Video files")
+            .setDesc("Default folder")
+            .addSearch((cb) => {
+                new FolderSuggest(this.app, cb.inputEl);
+                cb.setPlaceholder("Example: folder1/folder2")
+                    .setValue(this.plugin.settings.video_folder)
+                    .onChange((new_folder) => {
+                        this.plugin.settings.video_folder = new_folder;
                         this.plugin.saveSettings();
                     });
                 // @ts-ignore
