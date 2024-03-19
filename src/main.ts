@@ -2,7 +2,9 @@ import { Editor, MarkdownView, Notice, Plugin, TFile, TAbstractFile } from 'obsi
 import { SettingTab, PluginSettings, DEFAULT_SETTINGS } from "./settings/settings";
 import { debugLog, path} from './utils/utils';
 import { isImage, isVideo, isAudio } from './utils/check_attachments';
+import { getAPI} from "obsidian-dataview";
 
+const dv_api = getAPI();
 
 export default class MyPlugin extends Plugin {
 	settings: PluginSettings;
@@ -75,6 +77,29 @@ export default class MyPlugin extends Plugin {
 			}
 		});
 
+		this.addCommand({
+			id: 'move file into folder',
+			name: '移动文件到特定文件夹',
+			checkCallback: (checking: boolean) => {
+				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
+				if (markdownView) {
+					if (!checking) {
+						const filename = markdownView.file.name;
+						const filepath = markdownView.file.path;
+						debugLog('filename', filepath, filename);
+						const metadata = getAPI(this.app)?.page(filepath);
+						let dst_path = `Area/${metadata.Area}/${metadata.sub_area}`;
+						if (metadata.subsub_area){
+							dst_path += `/${metadata.subsub_area}`;
+							debugLog(metadata.subsub_area);
+						}
+						debugLog(metadata, dst_path);
+						this.move_files(markdownView.file, dst_path);
+					}
+					return true;
+				}
+			},
+		});
 
 		this.registerEvent(
 			this.app.vault.on('create', (file) => {
@@ -126,15 +151,29 @@ export default class MyPlugin extends Plugin {
 
 	async move_files(file: TFile, folder: string) {
 		const new_path = path.join(folder, file.name)
-		console.log(file.name, file.parent.path, new_path);
+		debugLog(file.name, file.parent.path, new_path);
+
+		//// check the folder exists 
+		const folder_cls = this.app.vault.getAbstractFileByPath(folder);
+		if (!folder_cls){
+			try {
+				await this.app.vault.createFolder(folder);
+			}
+			catch (err) {
+				new Notice(`❌Failed to create ${folder}: ${err}`)
+				throw err
+			}
+		}
+
+		//// move file
 		try {
 			await this.app.vault.rename(file, new_path);
 		}
 		catch (err) {
-			new Notice(`Failed to move ${this.settings.img_folder}: ${err}`)
+			new Notice(`❌Failed to move ${this.settings.img_folder}: ${err}`)
 			throw err
 		}
-		new Notice(`Move ${file.name} to ${new_path}`)
+		new Notice(`✅Success!!! Move ${file.name} to ${new_path}`)
 	}
 	async add_folder_sep() {
 		// 1. 首先删除所有的分割线
