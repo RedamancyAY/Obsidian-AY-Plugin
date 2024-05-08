@@ -1,4 +1,4 @@
-import { Editor, MarkdownView, Notice, Plugin, TFile, TAbstractFile, Menu, WorkspaceLeaf } from 'obsidian';
+import { Editor, MarkdownView, Notice, Plugin, TFile, TAbstractFile, Menu, WorkspaceLeaf, TFolder } from 'obsidian';
 import { SettingTab, PluginSettings, DEFAULT_SETTINGS } from "./settings/settings";
 import { debugLog, path } from './utils/utils';
 import { isImage, isVideo, isAudio } from './utils/check_attachments';
@@ -14,7 +14,10 @@ export default class MyPlugin extends Plugin {
 
 
 		var vault_name = this.app.vault.adapter.getName();
-		var vault_path = this.app.vault.adapter.basePath;
+		var _vault_path = this.app.vault.adapter;
+		if (_vault_path != null && 'basePath' in _vault_path){
+			var vault_path = _vault_path.basePath;
+		}
 		debugLog('hello', vault_name, vault_path);
 
 
@@ -100,8 +103,8 @@ export default class MyPlugin extends Plugin {
 				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
 				if (markdownView) {
 					if (!checking) {
-						const filename = markdownView.file.name;
-						const filepath = markdownView.file.path;
+						const filename = markdownView.file?.name;
+						const filepath = markdownView.file?.path;
 						debugLog('filename', filepath, filename);
 						const metadata = getAPI(this.app)?.page(filepath);
 						let dst_path = `Area/${metadata.Area}/${metadata.sub_area}`;
@@ -109,8 +112,10 @@ export default class MyPlugin extends Plugin {
 							dst_path += `/${metadata.subsub_area}`;
 							debugLog(metadata.subsub_area);
 						}
-						debugLog(metadata, dst_path, 'hello', this.app.vault.adapter.basePath);
-						this.move_files(markdownView.file, dst_path);
+						debugLog(metadata, dst_path, 'hello', vault_path);
+						if (markdownView.file != null){
+							this.move_files(markdownView.file, dst_path);
+						}
 					}
 					return true;
 				}
@@ -125,8 +130,8 @@ export default class MyPlugin extends Plugin {
 				if (markdownView) {
 					if (!checking) {
 						const fs = require('fs');
-						const filename = markdownView.file.name;
-						const filepath = vault_path + "/" + markdownView.file.path;
+						const filename = markdownView.file?.name;
+						const filepath = vault_path + "/" + markdownView.file?.path;
 						debugLog('filename', filepath, filename);
 
 						var other_vault_path = this.settings.other_vault_path;
@@ -200,7 +205,7 @@ export default class MyPlugin extends Plugin {
 
 	async move_files(file: TFile, folder: string) {
 		const new_path = path.join(folder, file.name)
-		debugLog(file.name, file.parent.path, new_path);
+		debugLog(file.name, file.parent?.path, new_path);
 
 		//// check the folder exists 
 		const folder_cls = this.app.vault.getAbstractFileByPath(folder);
@@ -264,7 +269,6 @@ export default class MyPlugin extends Plugin {
 						// folderListItems[i].append(newHrElement);
 						// folderListItems[i].parentNode?.insertAfter(newHrElement, folderListItems[i]);
 						newHrElement.insertAfter(folderListItems[i]?.parentElement?.parentElement);
-
 					}
 				}
 			}
