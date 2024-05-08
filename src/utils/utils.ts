@@ -1,3 +1,4 @@
+import * as moment from 'moment';
 import { basename } from 'path';
 
 export const DEBUG = !(process.env.BUILD_ENV === 'production')

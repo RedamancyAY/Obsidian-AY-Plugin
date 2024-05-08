@@ -195,13 +195,13 @@ export default class MyPlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 
-	handleFileMenu(menu, file) {
-		console.log(file);
-		if (file instanceof TFolder) {
-			// Perform actions when a folder is clicked
-			console.log("Folder clicked:", file.name);
-		}
-	}
+	// handleFileMenu(menu, file) {
+	// 	console.log(file);
+	// 	if (file instanceof TFolder) {
+	// 		// Perform actions when a folder is clicked
+	// 		console.log("Folder clicked:", file.name);
+	// 	}
+	// }
 
 	async move_files(file: TFile, folder: string) {
 		const new_path = path.join(folder, file.name)
@@ -267,8 +267,8 @@ export default class MyPlugin extends Plugin {
 						const newHrElement = document.createElement("hr");
 						newHrElement.classList.add("folder-separator-after");
 						// folderListItems[i].append(newHrElement);
-						// folderListItems[i].parentNode?.insertAfter(newHrElement, folderListItems[i]);
-						newHrElement.insertAfter(folderListItems[i]?.parentElement?.parentElement);
+						folderListItems[i].parentNode?.insertAfter(newHrElement, folderListItems[i]);
+						// newHrElement.insertAfter(folderListItems[i]?.parentElement?.parentElement);
 					}
 				}
 			}
