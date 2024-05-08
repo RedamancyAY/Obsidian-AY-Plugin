@@ -1,8 +1,8 @@
-import { Editor, MarkdownView, Notice, Plugin, TFile, TAbstractFile } from 'obsidian';
+import { Editor, MarkdownView, Notice, Plugin, TFile, TAbstractFile, Menu, WorkspaceLeaf } from 'obsidian';
 import { SettingTab, PluginSettings, DEFAULT_SETTINGS } from "./settings/settings";
-import { debugLog, path} from './utils/utils';
+import { debugLog, path } from './utils/utils';
 import { isImage, isVideo, isAudio } from './utils/check_attachments';
-import { getAPI} from "obsidian-dataview";
+import { getAPI } from "obsidian-dataview";
 
 const dv_api = getAPI();
 
@@ -11,6 +11,11 @@ export default class MyPlugin extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
+
+
+		var vault_name = this.app.vault.adapter.getName();
+		var vault_path = this.app.vault.adapter.basePath;
+		debugLog('hello', vault_name, vault_path);
 
 
 		// This creates an icon in the left ribbon.
@@ -28,6 +33,17 @@ export default class MyPlugin extends Plugin {
 		// 0-设置面板
 		this.addSettingTab(new SettingTab(this.app, this));
 		this.add_folder_sep();
+		// this.registerInterval(
+		// 	window.setInterval(() => this.add_folder_sep(), 1000)
+		//   );
+
+		this.registerEvent(
+			this.app.workspace.on('file-menu', (menu: Menu, file: TAbstractFile, source: string, leaf?: WorkspaceLeaf) => {
+				console.log("hello, world!!!")
+				this.add_folder_sep();
+				console.log("hello, world!!!");
+			})
+		)
 
 
 		// 1. set color for selected text
@@ -89,17 +105,42 @@ export default class MyPlugin extends Plugin {
 						debugLog('filename', filepath, filename);
 						const metadata = getAPI(this.app)?.page(filepath);
 						let dst_path = `Area/${metadata.Area}/${metadata.sub_area}`;
-						if (metadata.subsub_area){
+						if (metadata.subsub_area) {
 							dst_path += `/${metadata.subsub_area}`;
 							debugLog(metadata.subsub_area);
 						}
-						debugLog(metadata, dst_path);
+						debugLog(metadata, dst_path, 'hello', this.app.vault.adapter.basePath);
 						this.move_files(markdownView.file, dst_path);
 					}
 					return true;
 				}
 			},
 		});
+
+		this.addCommand({
+			id: 'move file into other vault',
+			name: '移动文件到其他库',
+			checkCallback: (checking: boolean) => {
+				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
+				if (markdownView) {
+					if (!checking) {
+						const fs = require('fs');
+						const filename = markdownView.file.name;
+						const filepath = vault_path + "/" + markdownView.file.path;
+						debugLog('filename', filepath, filename);
+
+						var other_vault_path = this.settings.other_vault_path;
+						debugLog("valut path is: ", other_vault_path, filepath, fs.existsSync(filepath), fs.existsSync(other_vault_path));
+						
+						fs.copyFileSync(filepath, other_vault_path + "/" + filename);
+
+					}
+					return true;
+				}
+			},
+		});
+
+
 
 		this.registerEvent(
 			this.app.vault.on('create', (file) => {
@@ -123,11 +164,11 @@ export default class MyPlugin extends Plugin {
 					debugLog('pasted PDF: ', file)
 					this.move_files(file, this.settings.pdf_folder);
 				}
-				else if (isAudio(file)){
+				else if (isAudio(file)) {
 					debugLog('pasted audio: ', file)
 					this.move_files(file, this.settings.audio_folder);
 				}
-				else if (isVideo(file)){
+				else if (isVideo(file)) {
 					debugLog('pasted video: ', file)
 					this.move_files(file, this.settings.video_folder);
 				}
@@ -149,13 +190,21 @@ export default class MyPlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 
+	handleFileMenu(menu, file) {
+		console.log(file);
+		if (file instanceof TFolder) {
+			// Perform actions when a folder is clicked
+			console.log("Folder clicked:", file.name);
+		}
+	}
+
 	async move_files(file: TFile, folder: string) {
 		const new_path = path.join(folder, file.name)
 		debugLog(file.name, file.parent.path, new_path);
 
 		//// check the folder exists 
 		const folder_cls = this.app.vault.getAbstractFileByPath(folder);
-		if (!folder_cls){
+		if (!folder_cls) {
 			try {
 				await this.app.vault.createFolder(folder);
 			}
@@ -212,7 +261,10 @@ export default class MyPlugin extends Plugin {
 					if (!hrElement) {
 						const newHrElement = document.createElement("hr");
 						newHrElement.classList.add("folder-separator-after");
-						folderListItems[i].append(newHrElement);
+						// folderListItems[i].append(newHrElement);
+						// folderListItems[i].parentNode?.insertAfter(newHrElement, folderListItems[i]);
+						newHrElement.insertAfter(folderListItems[i]?.parentElement?.parentElement);
+
 					}
 				}
 			}

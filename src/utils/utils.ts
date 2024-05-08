@@ -5,8 +5,11 @@ export const DEBUG = !(process.env.BUILD_ENV === 'production')
 
 // Log in console 
 export function debugLog(...args: any[]) {
+
 	if (DEBUG) {
-		console.log((new Date()).toISOString().slice(11, 23), ...args)
+		var _time = moment().format('YYYY/MM/DD/HH:mm:ss:ms');
+		// console.log((new Date()).toISOString().slice(11, 23), ...args);
+		console.log(_time, ...args)
 	}
 }
 

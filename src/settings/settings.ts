@@ -16,6 +16,8 @@ export interface PluginSettings {
     bg_img_folder: string; // the folder that store background images
     bg_img_left: string; // name of the left bg image
     bg_img_right: string; // name of the right bg image
+    other_vault_name: string;
+    other_vault_path: string;
 }
 
 export const DEFAULT_SETTINGS: Partial<PluginSettings> = {
@@ -29,7 +31,9 @@ export const DEFAULT_SETTINGS: Partial<PluginSettings> = {
     folder_sep_after: "",
     bg_img_folder: "",
     bg_img_left: "",
-    bg_img_right: ""
+    bg_img_right: "",
+    other_vault_name: "",
+    other_vault_path: "",
 };
 
 
@@ -65,6 +69,7 @@ export class SettingTab extends PluginSettingTab {
         this.add_file_default_folder_setting();
         this.add_folder_sep_setting();
         this.add_bg_img_setting();
+        this.add_move_vault_setting();
     }
 
     // 1. 为附件设置默认移动的文件夹
@@ -217,5 +222,31 @@ export class SettingTab extends PluginSettingTab {
                         await this.plugin.saveSettings();
                     })
             );
+        
+    }
+    add_move_vault_setting():void{
+        this.containerEl.createEl("h2", { text: "其他valut路径" });
+        new Setting(this.containerEl)
+            .setName("vault名和路径")
+            .setDesc("必须是系统的绝对路径")
+            .addText((text) =>
+                text
+                    .setPlaceholder("Vault Name")
+                    .setValue(this.plugin.settings.other_vault_name)
+                    .onChange(async (value) => {
+                        this.plugin.settings.other_vault_name = value;
+                        await this.plugin.saveSettings();
+                    })
+            )
+            .addText((text) =>
+                text
+                    .setPlaceholder("Vault Path")
+                    .setValue(this.plugin.settings.other_vault_path)
+                    .onChange(async (value) => {
+                        this.plugin.settings.other_vault_path = value;
+                        await this.plugin.saveSettings();
+                    })
+            );
+        
     }
 }
