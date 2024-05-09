@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 import { basename } from 'path';
 
 export const DEBUG = !(process.env.BUILD_ENV === 'production')
@@ -8,7 +8,8 @@ export const DEBUG = !(process.env.BUILD_ENV === 'production')
 export function debugLog(...args: any[]) {
 
 	if (DEBUG) {
-		var _time = moment().format('YYYY/MM/DD/HH:mm:ss:ms');
+		const now = moment();
+		var _time = now.format('YYYY/MM/DD/HH:mm:ss:ms');
 		// console.log((new Date()).toISOString().slice(11, 23), ...args);
 		console.log(_time, ...args)
 	}
