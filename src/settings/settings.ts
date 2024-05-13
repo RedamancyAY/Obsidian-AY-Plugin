@@ -1,6 +1,7 @@
 import MyPlugin from "../main";
 import { App, PluginSettingTab, Setting } from "obsidian";
 import { FolderSuggest } from "./suggesters/FolderSuggester";
+import { debugLog } from "src/utils/utils";
 
 
 // variables for plugin settings
@@ -15,7 +16,9 @@ export interface PluginSettings {
     folder_sep_after: string;
     bg_img_folder: string; // the folder that store background images
     bg_img_left: string; // name of the left bg image
+    bg_img_left_width: string; // width of the left bf image
     bg_img_right: string; // name of the right bg image
+    bg_img_right_width: string; // width of the right bf image
     other_vault_name: string;
     other_vault_path: string;
 }
@@ -31,7 +34,9 @@ export const DEFAULT_SETTINGS: Partial<PluginSettings> = {
     folder_sep_after: "",
     bg_img_folder: "",
     bg_img_left: "",
+    bg_img_left_width: "100px",
     bg_img_right: "",
+    bg_img_right_width: "100px",
     other_vault_name: "",
     other_vault_path: "",
 };
@@ -187,18 +192,6 @@ export class SettingTab extends PluginSettingTab {
     add_bg_img_setting():void{
         this.containerEl.createEl("h2", { text: "添加背景图像" });
         new Setting(this.containerEl)
-            .setName("背景图像文件夹")
-            .setDesc("必须是系统的绝对路径")
-            .addText((text) =>
-                text
-                    .setPlaceholder("/Users/ay/Library/Mobile Documents/iCloud~md~obsidian/Documents/wallpapers")
-                    .setValue(this.plugin.settings.bg_img_folder)
-                    .onChange(async (value) => {
-                        this.plugin.settings.bg_img_folder = value;
-                        await this.plugin.saveSettings();
-                    })
-            );
-        new Setting(this.containerEl)
             .setName("左侧图像名")
             .setDesc("文件名")
             .addText((text) =>
@@ -207,6 +200,17 @@ export class SettingTab extends PluginSettingTab {
                     .setValue(this.plugin.settings.bg_img_left)
                     .onChange(async (value) => {
                         this.plugin.settings.bg_img_left = value;
+                        this.changeLeftBgImg(value);
+                        await this.plugin.saveSettings();
+                    })
+            )
+            .addText((text) =>
+                text
+                    .setPlaceholder("image width, 100px")
+                    .setValue(this.plugin.settings.bg_img_left_width)
+                    .onChange(async (value) => {
+                        this.plugin.settings.bg_img_left_width = value;
+                        this.changeLeftBgImgWidth(value);
                         await this.plugin.saveSettings();
                     })
             );
@@ -219,11 +223,45 @@ export class SettingTab extends PluginSettingTab {
                     .setValue(this.plugin.settings.bg_img_right)
                     .onChange(async (value) => {
                         this.plugin.settings.bg_img_right = value;
+                        this.changeRightBgImg(value);
+                        await this.plugin.saveSettings();
+                    })
+            )
+            .addText((text) =>
+                text
+                    .setPlaceholder("image width, 100px")
+                    .setValue(this.plugin.settings.bg_img_right_width)
+                    .onChange(async (value) => {
+                        this.plugin.settings.bg_img_right_width = value;
+                        this.changeRightBgImgWidth(value);
                         await this.plugin.saveSettings();
                     })
             );
         
     }
+
+    changeLeftBgImgWidth(width: string) {  
+        debugLog('change left bg img size');
+        const root = document.documentElement; 
+        root.style.setProperty('--nav-files-container-bg_img-size', width);  
+    }  
+    changeLeftBgImg(url: string) {  
+        debugLog('change left bg img');
+        const root = document.documentElement; 
+        root.style.setProperty('--nav-files-container-bg_img', 'url('+ url+')');  
+    }  
+    changeRightBgImgWidth(width: string) {  
+        debugLog('change left bg img size');
+        const root = document.documentElement; 
+        root.style.setProperty('--note-bg_img-size', width);  
+    } 
+    changeRightBgImg(url: string) {  
+        debugLog('change right bg img');
+        const root = document.documentElement; 
+        root.style.setProperty('--note-bg_img', 'url('+ url+')');  
+    }  
+
+    // 4. 
     add_move_vault_setting():void{
         this.containerEl.createEl("h2", { text: "其他valut路径" });
         new Setting(this.containerEl)

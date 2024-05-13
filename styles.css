@@ -59,3 +59,27 @@ If your plugin does not need CSS, delete this file.
 }
 
 
+:root {
+    --nav-files-container-bg_img: url(app://local/Users/ay/Documents/AY&QQ/QQ-1.png);
+    --nav-files-container-bg_img-size: 200px;
+
+    --note-bg_img: url(https://cdn.jsdelivr.net/gh/RedamancyAY/CloudImage@main/img/202209032049212.webp);
+    --note-bg_img-size: 150px;
+}
+
+
+/* 在左侧文件夹页面添加动图 */
+.nav-files-container {
+    background-image: var(--nav-files-container-bg_img) !important;
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    background-size: var(--nav-files-container-bg_img-size) auto;
+}
+
+/* .mod-root  */
+.mod-root .markdown-reading-view {
+    background-image: var(--note-bg_img) !important;
+    background-position: right bottom;
+    background-repeat: no-repeat;
+    background-size: var(--note-bg_img-size) auto;
+}

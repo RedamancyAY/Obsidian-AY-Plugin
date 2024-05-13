@@ -1,6 +1,4 @@
-import * as moment from 'moment';
 import { basename } from 'path';
-
 export const DEBUG = !(process.env.BUILD_ENV === 'production')
 
 
@@ -8,10 +6,9 @@ export const DEBUG = !(process.env.BUILD_ENV === 'production')
 export function debugLog(...args: any[]) {
 
 	if (DEBUG) {
-		const now = moment();
-		var _time = now.format('YYYY/MM/DD/HH:mm:ss:ms');
-		// console.log((new Date()).toISOString().slice(11, 23), ...args);
-		console.log(_time, ...args)
+		var _time = (new Date()).toLocaleTimeString();
+		console.log('hello');
+		console.log('\x1b[31m%s\x1b[0m', _time, ...args);
 	}
 }
 
