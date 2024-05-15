@@ -263,7 +263,7 @@ export class SettingTab extends PluginSettingTab {
 
     // 4. 
     add_move_vault_setting():void{
-        this.containerEl.createEl("h2", { text: "其他valut路径" });
+        this.containerEl.createEl("h2", { text: "其他vault路径" });
         new Setting(this.containerEl)
             .setName("vault名和路径")
             .setDesc("必须是系统的绝对路径")
