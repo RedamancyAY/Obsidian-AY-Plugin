@@ -96,6 +96,7 @@ export default class MyPlugin extends Plugin {
 			}
 		});
 
+		// 2. 移动文件到特定文件夹
 		this.addCommand({
 			id: 'move file into folder',
 			name: '移动文件到特定文件夹',
@@ -121,6 +122,37 @@ export default class MyPlugin extends Plugin {
 				}
 			},
 		});
+
+
+		//  Area to Tag
+		this.addCommand({
+			id: 'Create Tag by Area',
+			name: '从Area生成tag',
+			checkCallback: (checking: boolean) => {
+				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
+				if (markdownView) {
+					if (!checking) {
+						this.create_tag_from_Area(markdownView.file);
+					}
+					return true;
+				}
+			},
+		});
+		this.addCommand({
+			id: 'Create Tag by Area For all markdown files',
+			name: '从Area生成tag For all markdown files',
+			checkCallback: (checking: boolean) => {
+				const markdownFiles = this.app.vault.getMarkdownFiles();
+				debugLog(markdownFiles);
+				if (!checking){
+					for (let i =0; i< markdownFiles.length; i++){
+						this.create_tag_from_Area(markdownFiles[i]);
+					}
+				}
+				return true;
+			},
+		});
+
 
 		this.addCommand({
 			id: 'move file into other vault',
@@ -202,6 +234,40 @@ export default class MyPlugin extends Plugin {
 	// 		console.log("Folder clicked:", file.name);
 	// 	}
 	// }
+
+	async create_tag_from_Area(file: TFile | null){
+		if (file == null){
+			return true;
+		}
+		const filepath = file.path;
+		const metadata = getAPI(this.app)?.page(filepath);
+		let tag = "";
+		if (metadata.Area){
+			tag += `Area/${metadata.Area}`;
+		}
+		if (metadata.sub_area){
+			tag += `/${metadata.sub_area}`;
+		}
+		if (metadata.subsub_area) {
+			tag += `/${metadata.subsub_area}`;
+		}
+		let metadata_tags = metadata.tags;
+		if (tag == "") return true;
+		if (file){
+			this.app.fileManager.processFrontMatter(file, (fm) =>{
+				if (fm.tags == undefined){
+					fm.tags = [];
+					debugLog("Create tags item in the metadata of file: ", filepath);
+				}
+				const index = fm.tags?.indexOf(tag);
+				if (index == undefined || index != -1) return true;
+				else{
+					fm.tags.splice(0, 0, tag);
+					debugLog("Create tag ", tag, "in the file: ", filepath);
+				}
+			})
+		}
+	}
 
 	async move_files(file: TFile, folder: string) {
 		const new_path = path.join(folder, file.name)
