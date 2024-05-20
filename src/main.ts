@@ -139,6 +139,19 @@ export default class MyPlugin extends Plugin {
 			},
 		});
 		this.addCommand({
+			id: 'Create Area by tag',
+			name: '从tag生成Area',
+			checkCallback: (checking: boolean) => {
+				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
+				if (markdownView) {
+					if (!checking) {
+						this.create_Area_from_tag(markdownView.file);
+					}
+					return true;
+				}
+			},
+		});
+		this.addCommand({
 			id: 'Create Tag by Area For all markdown files',
 			name: '从Area生成tag For all markdown files',
 			checkCallback: (checking: boolean) => {
@@ -268,6 +281,31 @@ export default class MyPlugin extends Plugin {
 			})
 		}
 	}
+	async create_Area_from_tag(file: TFile | null){
+		if (file == null){
+			return true;
+		}
+		const filepath = file.path;
+		const metadata = getAPI(this.app)?.page(filepath);
+		let tags = metadata.tags;
+		for (let i =0 ; i < tags.length; i++){
+			if (tags[i].indexOf("Area/") != -1){
+				if (file){
+					this.app.fileManager.processFrontMatter(file, (fm) =>{
+						let sub_tags = tags[i].split('/')
+						for (let j = 1; j < sub_tags.length; j++){
+							if (j == 1) fm.Area = sub_tags[j];
+							if (j == 2) fm.sub_area = sub_tags[j];
+							if (j == 3) fm.subsub_area = sub_tags[j];
+							if (j > 3) break;
+						}
+					})
+				}		
+				break;
+			}
+		}
+	}
+
 
 	async move_files(file: TFile, folder: string) {
 		const new_path = path.join(folder, file.name)
