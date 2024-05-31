@@ -83,3 +83,9 @@ If your plugin does not need CSS, delete this file.
     background-repeat: no-repeat;
     background-size: var(--note-bg_img-size) auto;
 }
+.mod-root .markdown-source-view {
+    background-image: var(--note-bg_img) !important;
+    background-position: right bottom;
+    background-repeat: no-repeat;
+    background-size: var(--note-bg_img-size) auto;
+}
