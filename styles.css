@@ -60,10 +60,10 @@ If your plugin does not need CSS, delete this file.
 
 
 :root {
-    --nav-files-container-bg_img: url(app://local/Users/ay/Documents/AY&QQ/QQ-1.png);
-    --nav-files-container-bg_img-size: 200px;
+    --nav-files-container-bg_img: url("https://pub-d5f0132a22cc48c99c2d7e093f1028a6.r2.dev/Chest_atlas10.gif");
+    --nav-files-container-bg_img-size: 150px;
 
-    --note-bg_img: url(https://cdn.jsdelivr.net/gh/RedamancyAY/CloudImage@main/img/202209032049212.webp);
+    --note-bg_img: url("https://pub-d5f0132a22cc48c99c2d7e093f1028a6.r2.dev/Chest_atlas5.gif");
     --note-bg_img-size: 150px;
 }
 
@@ -76,7 +76,7 @@ If your plugin does not need CSS, delete this file.
     background-size: var(--nav-files-container-bg_img-size) auto;
 }
 
-/* .mod-root  */
+/* .mod-root 在右侧文件md页面添加动图 */
 .mod-root .markdown-reading-view {
     background-image: var(--note-bg_img) !important;
     background-position: right bottom;

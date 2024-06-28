@@ -1,6 +1,7 @@
 import { Editor, MarkdownView, Notice, Plugin, TFile, TAbstractFile, Menu, WorkspaceLeaf, TFolder } from 'obsidian';
 import { SettingTab, PluginSettings, DEFAULT_SETTINGS } from "./settings/settings";
 import { debugLog, path } from './utils/utils';
+import {clearFrontmatter} from "./utils/contents"
 import { isImage, isVideo, isAudio } from './utils/check_attachments';
 import { getAPI } from "obsidian-dataview";
 
@@ -190,6 +191,19 @@ export default class MyPlugin extends Plugin {
 			},
 		});
 
+		this.addCommand({
+			id: 'clear the fontmatter of current md file',
+			name: '清除当前文件的frontmatter',
+			checkCallback: (checking: boolean) => {
+				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
+				if (markdownView) {
+					if (!checking) {
+						clearFrontmatter(markdownView.file, this.app.vault);
+					}
+					return true;
+				}
+			},
+		});
 
 
 		this.registerEvent(
