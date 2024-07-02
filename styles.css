@@ -24,16 +24,22 @@ If your plugin does not need CSS, delete this file.
 .text-bg-pink {
     background-color: #ffa7c1;
     color: var(--text-bg-pink-fontcolor) !important;
+    padding: 1.3px 1.3px 1.3px 1.3px;
+    border-radius: 3px;
 }
 
 .text-bg-green {
     background-color: #52FFA2;
     color: var(--text-bg-green-fontcolor) !important;
+    padding: 1.3px 1.3px 1.3px 1.3px;
+    border-radius: 3px;
 }
 
 .text-bg-purple {
     background-color: #CDA7FF;
     color: var(--text-bg-purple-fontcolor) !important;
+    padding: 1.3px 1.3px 1.3px 1.3px;
+    border-radius: 3px;
 }
 
 
@@ -60,10 +66,10 @@ If your plugin does not need CSS, delete this file.
 
 
 :root {
-    --nav-files-container-bg_img: url("https://pub-d5f0132a22cc48c99c2d7e093f1028a6.r2.dev/Chest_atlas10.gif");
+    --nav-files-container-bg_img: url("https://pub-d5f0132a22cc48c99c2d7e093f1028a6.r2.dev/Chest_atlas5.gif");
     --nav-files-container-bg_img-size: 150px;
 
-    --note-bg_img: url("https://pub-d5f0132a22cc48c99c2d7e093f1028a6.r2.dev/Chest_atlas5.gif");
+    --note-bg_img: url("https://pub-d5f0132a22cc48c99c2d7e093f1028a6.r2.dev/Chest_atlas10.gif");
     --note-bg_img-size: 150px;
 }
 
