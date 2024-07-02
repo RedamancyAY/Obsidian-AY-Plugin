@@ -1,7 +1,7 @@
 import { Editor, MarkdownView, Notice, Plugin, TFile, TAbstractFile, Menu, WorkspaceLeaf, TFolder } from 'obsidian';
 import { SettingTab, PluginSettings, DEFAULT_SETTINGS } from "./settings/settings";
 import { debugLog, path } from './utils/utils';
-import {clearFrontmatter} from "./utils/contents"
+import {clearFrontmatter, create_tag_from_Area, create_Area_from_tag} from "./utils/frontmatter"
 import { isImage, isVideo, isAudio } from './utils/check_attachments';
 import { getAPI } from "obsidian-dataview";
 
@@ -109,7 +109,14 @@ export default class MyPlugin extends Plugin {
 						const filepath = markdownView.file?.path;
 						debugLog('filename', filepath, filename);
 						const metadata = getAPI(this.app)?.page(filepath);
-						let dst_path = `Area/${metadata.Area}/${metadata.sub_area}`;
+						if (metadata.Area == null) {
+							return true;
+						}
+						let dst_path = `Area/${metadata.Area}`;
+						if (metadata.sub_area) {
+							dst_path += `/${metadata.sub_area}`;
+							debugLog(metadata.sub_area);
+						}
 						if (metadata.subsub_area) {
 							dst_path += `/${metadata.subsub_area}`;
 							debugLog(metadata.subsub_area);
@@ -133,7 +140,7 @@ export default class MyPlugin extends Plugin {
 				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
 				if (markdownView) {
 					if (!checking) {
-						this.create_tag_from_Area(markdownView.file);
+						create_tag_from_Area(markdownView.file);
 					}
 					return true;
 				}
@@ -146,7 +153,7 @@ export default class MyPlugin extends Plugin {
 				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
 				if (markdownView) {
 					if (!checking) {
-						this.create_Area_from_tag(markdownView.file);
+						create_Area_from_tag(markdownView.file);
 					}
 					return true;
 				}
@@ -160,7 +167,7 @@ export default class MyPlugin extends Plugin {
 				debugLog(markdownFiles);
 				if (!checking){
 					for (let i =0; i< markdownFiles.length; i++){
-						this.create_tag_from_Area(markdownFiles[i]);
+						create_tag_from_Area(markdownFiles[i]);
 					}
 				}
 				return true;
@@ -262,63 +269,7 @@ export default class MyPlugin extends Plugin {
 	// 	}
 	// }
 
-	async create_tag_from_Area(file: TFile | null){
-		if (file == null){
-			return true;
-		}
-		const filepath = file.path;
-		const metadata = getAPI(this.app)?.page(filepath);
-		let tag = "";
-		if (metadata.Area){
-			tag += `Area/${metadata.Area}`;
-		}
-		if (metadata.sub_area){
-			tag += `/${metadata.sub_area}`;
-		}
-		if (metadata.subsub_area) {
-			tag += `/${metadata.subsub_area}`;
-		}
-		let metadata_tags = metadata.tags;
-		if (tag == "") return true;
-		if (file){
-			this.app.fileManager.processFrontMatter(file, (fm) =>{
-				if (fm.tags == undefined){
-					fm.tags = [];
-					debugLog("Create tags item in the metadata of file: ", filepath);
-				}
-				const index = fm.tags?.indexOf(tag);
-				if (index == undefined || index != -1) return true;
-				else{
-					fm.tags.splice(0, 0, tag);
-					debugLog("Create tag ", tag, "in the file: ", filepath);
-				}
-			})
-		}
-	}
-	async create_Area_from_tag(file: TFile | null){
-		if (file == null){
-			return true;
-		}
-		const filepath = file.path;
-		const metadata = getAPI(this.app)?.page(filepath);
-		let tags = metadata.tags;
-		for (let i =0 ; i < tags.length; i++){
-			if (tags[i].indexOf("Area/") != -1){
-				if (file){
-					this.app.fileManager.processFrontMatter(file, (fm) =>{
-						let sub_tags = tags[i].split('/')
-						for (let j = 1; j < sub_tags.length; j++){
-							if (j == 1) fm.Area = sub_tags[j];
-							if (j == 2) fm.sub_area = sub_tags[j];
-							if (j == 3) fm.subsub_area = sub_tags[j];
-							if (j > 3) break;
-						}
-					})
-				}		
-				break;
-			}
-		}
-	}
+
 
 
 	async move_files(file: TFile, folder: string) {
