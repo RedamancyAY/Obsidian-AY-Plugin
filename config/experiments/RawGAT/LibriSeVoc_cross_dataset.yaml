@@ -1,0 +1,4 @@
+DATASET:
+  name: 'LibriSeVoc'
+  task: 'cross_dataset'
+  

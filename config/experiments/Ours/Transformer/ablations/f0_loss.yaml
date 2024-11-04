@@ -1,0 +1,4 @@
+MODEL:
+  use_speed_loss: 0
+  use_compression_loss: 0
+  use_f0_loss: 1

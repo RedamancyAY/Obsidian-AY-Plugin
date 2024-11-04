@@ -1,0 +1,6 @@
+DATASET:
+  batch_size: 64
+
+
+MODEL:
+  feature_extractor: 'LCNN'

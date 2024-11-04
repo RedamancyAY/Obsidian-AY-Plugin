@@ -1,0 +1,4 @@
+DATASET:
+  name: 'LibriSeVoc'
+  task: 'inner_eval'
+  
