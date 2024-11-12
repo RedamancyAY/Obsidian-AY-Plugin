@@ -57,6 +57,10 @@ if __name__ == "__main__":
     parser.add_argument("--dims", type=str, default='[32, 64, 64, 128]')
     parser.add_argument("--nblocks", type=str, default='[1,1,3,1]')
     parser.add_argument("--ablation", type=str, default=None)
+
+
+    parser.add_argument("--filter_ASV2021", type=int, default=0)
+    
     
     ## multiview model
     parser.add_argument("--alpha", type=float, default=0.7)
@@ -98,23 +102,24 @@ if __name__ == "__main__":
     # cfg.MODEL.n_blocks = eval(args.nblocks)
     if args.batch_size > 0:
         cfg.DATASET.batch_size = args.batch_size
+        cfg.DATASET.test_batch_size = args.batch_size
     ds, dl = make_data(cfg.DATASET, args=args)
 
 
 
-    for item in ['train', 'val', 'test']:
-        _data = getattr(ds, item)
-        if isinstance(_data, list):
-            for i, _df in enumerate(_data):
-                save_path = os.path.join(ROOT_DIR, "%s-%s-%d.csv" % (args.cfg, item, i))
-                if not os.path.exists(os.path.split(save_path)[0]):
-                    os.makedirs(os.path.split(save_path)[0])
-                _df.data.to_csv(save_path)
-        else:
-            save_path = os.path.join(ROOT_DIR, "%s-%s.csv" % (args.cfg, item))
-            if not os.path.exists(os.path.split(save_path)[0]):
-                os.makedirs(os.path.split(save_path)[0])
-            _data.data.to_csv(save_path)
+    # for item in ['train', 'val', 'test']:
+    #     _data = getattr(ds, item)
+    #     if isinstance(_data, list):
+    #         for i, _df in enumerate(_data):
+    #             save_path = os.path.join(ROOT_DIR, "%s-%s-%d.csv" % (args.cfg, item, i))
+    #             if not os.path.exists(os.path.split(save_path)[0]):
+    #                 os.makedirs(os.path.split(save_path)[0])
+    #             _df.data.to_csv(save_path)
+    #     else:
+    #         save_path = os.path.join(ROOT_DIR, "%s-%s.csv" % (args.cfg, item))
+    #         if not os.path.exists(os.path.split(save_path)[0]):
+    #             os.makedirs(os.path.split(save_path)[0])
+    #         _data.data.to_csv(save_path)
     # sys.exit()
     
     
@@ -127,6 +132,7 @@ if __name__ == "__main__":
     model = make_model(args.cfg, cfg, args)
     callbacks = make_callbacks(args, cfg)
     if args.use_profiler:
+        callbacks = []
         throughput = pl.callbacks.ThroughputMonitor(batch_size_fn=lambda batch: batch['audio'].size(0), window_size=50)
         from ay2.torch.lightning.callbacks import FLOPs_Callback
         callbacks += [throughput, FLOPs_Callback(batch_size_fn=lambda batch: batch['audio'].size(0))]
@@ -196,9 +202,12 @@ if __name__ == "__main__":
         ckpt_path = get_ckpt_path(log_dir, theme=args.theme)
         trainer.trainset_wo_transform = dl.train_wo_transform
 
+        
+        
         if not args.collect:
-            for test_dl in to_list(dl.test):
-                trainer.test(model, test_dl, ckpt_path=ckpt_path)
+            for i, test_dl in enumerate(to_list(dl.test)):
+                print(len(test_dl))
+                trainer.test(model, test_dl, ckpt_path=ckpt_path if i == 0 else None)
         else:
             for test_dl in to_list(dl.test) + [dl.val]:
                 trainer.test(model, test_dl, ckpt_path=ckpt_path)

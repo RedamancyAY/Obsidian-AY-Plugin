@@ -455,7 +455,10 @@ class Phoneme_GAT(nn.Module):
         self.transformer_in_phoneme_model = self.phoneme_model.model.model.wavlm if backbone.lower() == 'wavlm' else self.phoneme_model.model.model.wav2vec2
         self.phoneme_model.requires_grad_(False)
         self.phoneme_model.eval()
-
+        
+        # self.transformer_in_phoneme_model.requires_grad_(False)
+        # self.transformer_in_phoneme_model.eval()
+        
         self.encoder = deepcopy(self.transformer_in_phoneme_model.encoder)
         # self.encoder = load_phoneme_model(
         #     network_name=network_name,
@@ -603,14 +606,18 @@ class Phoneme_GAT(nn.Module):
 
         with profiler.profile("generate phoneme features"):
             with torch.no_grad():
-                # output = self.phoneme_model.model.model(x, output_hidden_states=True)
-                feat1 = self.transformer_in_phoneme_model.feature_extractor(x).transpose(1, 2)
-                hidden_states, _ = self.transformer_in_phoneme_model.feature_projection(
-                    feat1
-                )  # (B, T, C), extract_features is the layer norm of feat1
-                phoneme_feat = self.transformer_in_phoneme_model.encoder(hidden_states)[0]
-                phoneme_logits = self.phoneme_model.model.model.lm_head(phoneme_feat)  # (B, T, P)
-                phoneme_ids = torch.argmax(phoneme_logits, dim=-1)  # shape changes from (B, T, P) -> (B,T)
+                with profiler.profile("generate phoneme features: 1D CNN"):
+                    
+                    # output = self.phoneme_model.model.model(x, output_hidden_states=True)
+                    feat1 = self.transformer_in_phoneme_model.feature_extractor(x).transpose(1, 2)
+                    hidden_states, _ = self.transformer_in_phoneme_model.feature_projection(
+                        feat1
+                    )  # (B, T, C), extract_features is the layer norm of feat1
+                with profiler.profile("generate phoneme features: encoder"):
+                    phoneme_feat = self.transformer_in_phoneme_model.encoder(hidden_states)[0]
+                with profiler.profile("generate phoneme features: generate phoneme ids"):
+                    phoneme_logits = self.phoneme_model.model.model.lm_head(phoneme_feat)  # (B, T, P)
+                    phoneme_ids = torch.argmax(phoneme_logits, dim=-1)  # shape changes from (B, T, P) -> (B,T)
 
         # in org config of wav2vec2, mask_time_prob=0.05, mask_feature_prob=0
         masked_hidden_states = _mask_hidden_states(hidden_states, self.transformer_in_phoneme_model)  # (B, T, C)
@@ -625,7 +632,7 @@ class Phoneme_GAT(nn.Module):
                 encoder_feat,
                 logit,
             ) = self.encoder_and_GAT(
-                masked_hidden_states, num_frames, phoneme_ids, ground_truth_labels=ground_truth_labels
+                masked_hidden_states, num_frames, phoneme_ids, ground_truth_labels=ground_truth_labels, profiler=profiler
             )
 
         aug_labels, aug_logit, aug_frame_logit, phoneme_cls_logit, phoneme_cls_label = None, None, None, None, None

@@ -4,8 +4,7 @@
 import torch
 import torchaudio
 from textless.data.speech_encoder import SpeechEncoder
-from torch_kmeans import KMeans
-
+# from torch_kmeans import KMeans
 
 def load_SpeechEncoder():
     dense_model_name = "hubert-base-ls960"

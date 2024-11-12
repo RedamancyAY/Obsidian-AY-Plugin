@@ -52,9 +52,15 @@ def build_logger(args, root_dir):
         if args.collect:
             savename = 'collect.csv'
         elif args.test_noise:
-            savename = f'noise_{args.test_noise_type}_{args.test_noise_level}.csv'
+            if args.filter_ASV2021:
+                savename = f'noise_{args.test_noise_type}_{args.test_noise_level}-filter_ASV2021.csv'
+            else:
+                savename = f'noise_{args.test_noise_type}_{args.test_noise_level}.csv'
+        elif args.filter_ASV2021:
+            savename = 'filter_ASV2021.csv'
         else:
             savename = 'test.csv'
+            
         logger = CustomNameCSVLogger(
             root_dir,
             name=name,

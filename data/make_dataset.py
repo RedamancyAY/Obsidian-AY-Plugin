@@ -254,8 +254,8 @@ def make_ASV2019(cfg):
         data_splits = dataset.get_splits()
 
     data_splits.test = [data_splits.test]
-    data_splits.test += get_ASV2021_whole_test_split()
-    data_splits.test += get_ASV2021_test_splits()
+    data_splits.test += get_ASV2021_whole_test_split(cfg=cfg)
+    data_splits.test += get_ASV2021_test_splits(cfg=cfg)
     return data_splits
 
 
@@ -271,16 +271,38 @@ def get_ASV2019_test_split(root_path="/home/ay/data/0-原始数据集/ASV2019"):
 
 
 # +
-def get_ASV2021_test_splits(root_path="/home/ay/ASV2021"):
+def get_ASV2021_test_splits(root_path="/home/ay/ASV2021", cfg=None):
     dataset = ASV2021_AudioDs(root_path=root_path)
     data_splits = dataset.get_test_splits()
+
+    
+    if cfg is None:
+        return data_splits
+
+    
+    args = eval(cfg.runtime_args)
+    if args.filter_ASV2021:
+        AA = ["A07", "A08", "A09", "A10", "A11", "A12", "A13", "A14", "A15", "A16", "A17", "A18", "A19"]
+        data_splits = [data.query(f"attack not in {AA}").reset_index(drop=True) for data in data_splits]
+
+
     return data_splits
 
 
-def get_ASV2021_whole_test_split(root_path="/home/ay/ASV2021"):
+def get_ASV2021_whole_test_split(root_path="/home/ay/ASV2021", cfg=None):
     dataset = ASV2021_AudioDs(root_path=root_path)
     test = dataset.get_whole_test_split()
-    return [test]
+    data_splits = [test]
+
+    if cfg is None:
+        return data_splits
+    
+    args = eval(cfg.runtime_args)
+    if args.filter_ASV2021:
+        AA = ["A07", "A08", "A09", "A10", "A11", "A12", "A13", "A14", "A15", "A16", "A17", "A18", "A19"]
+        data_splits = [data.query(f"attack not in {AA}").reset_index(drop=True) for data in data_splits]
+    return data_splits
+
 
 
 # -
@@ -292,7 +314,13 @@ def make_ASV2021(cfg):
         color_print("ASVspoof 2021 DF task: inner evaluation")
         data_splits = dataset.get_splits()
 
-    data_splits.test += get_ASV2021_whole_test_split()
+    data_splits.test += get_ASV2021_whole_test_split(root_path=cfg.root_path)
+
+    args = eval(cfg.runtime_args)
+    if args.filter_ASV2021:
+        AA = ["A07", "A08", "A09", "A10", "A11", "A12", "A13", "A14", "A15", "A16", "A17", "A18", "A19"]
+        data_splits.test[1:] = [data.query(f"attack not in {AA}").reset_index(drop=True) for data in data_splits.test[1:]]
+    
     return data_splits
 
 
@@ -304,8 +332,8 @@ def make_ASV2021_LA(cfg):
 
     data_splits.test = [data_splits.test]
     data_splits.test.append(get_ASV2019_test_split())
-    data_splits.test += get_ASV2021_whole_test_split()
-    data_splits.test += get_ASV2021_test_splits()
+    data_splits.test += get_ASV2021_whole_test_split(cfg=cfg)
+    data_splits.test += get_ASV2021_test_splits(cfg=cfg)
     return data_splits
 
 
@@ -317,7 +345,7 @@ def make_Codecfake(cfg):
     data_splits = dataset.get_splits()
 
     data_splits.test.append(get_ASV2019_test_split())
-    data_splits.test += get_ASV2021_whole_test_split()
+    data_splits.test += get_ASV2021_whole_test_split(cfg=cfg)
     return data_splits
 
 # ### VGG Sound
@@ -516,7 +544,7 @@ def build_dataloader(data: pd.DataFrame, cfg, is_training: bool = True, args=Non
         _ds,
         batch_size=batch_size,
         # num_workers=cfg.num_workers,
-        num_workers=20,
+        num_workers=10,
         pin_memory=True,
         shuffle=True if is_training else False,
         # shuffle=True,
@@ -566,6 +594,9 @@ def print_audio_splits_label_distribution(audio_splits):
 
 
 def make_data(cfg, args=None):
+
+    cfg.dataset_cfg.runtime_args = str(args)
+    
     # make audio splits (pd.DataFrame)
     audio_splits = MAKE_DATASETS[cfg.name](cfg.dataset_cfg)
     audio_splits.train = over_sample_dataset(audio_splits.train, column="label")
