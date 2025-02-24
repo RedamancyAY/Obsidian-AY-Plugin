@@ -1,0 +1,6 @@
+DATASET:
+  batch_size: 128
+  test_batch_size: 16
+    
+MODEL:
+  feature_extractor: 'ResNet'

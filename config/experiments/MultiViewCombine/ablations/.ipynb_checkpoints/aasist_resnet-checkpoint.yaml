@@ -1,0 +1,8 @@
+MODEL:
+  MultiViewCombine:
+    model1D: 'aasist'
+    model2D: 'resnet'
+
+DATASET:
+  batch_size: 32
+  test_batch_size: 32

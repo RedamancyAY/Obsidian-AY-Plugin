@@ -1,0 +1,230 @@
+{
+    "flops_forward": {
+        "": {
+            "convolution.default": 1813561344,
+            "addmm.default": 512000
+        },
+        "conv1": {
+            "convolution.default": 118013952
+        },
+        "layer1": {
+            "convolution.default": 462422016
+        },
+        "layer1.0": {
+            "convolution.default": 231211008
+        },
+        "layer1.0.conv1": {
+            "convolution.default": 115605504
+        },
+        "layer1.0.conv2": {
+            "convolution.default": 115605504
+        },
+        "layer1.1": {
+            "convolution.default": 231211008
+        },
+        "layer1.1.conv1": {
+            "convolution.default": 115605504
+        },
+        "layer1.1.conv2": {
+            "convolution.default": 115605504
+        },
+        "layer2": {
+            "convolution.default": 411041792
+        },
+        "layer2.0": {
+            "convolution.default": 179830784
+        },
+        "layer2.0.conv1": {
+            "convolution.default": 57802752
+        },
+        "layer2.0.conv2": {
+            "convolution.default": 115605504
+        },
+        "layer2.0.downsample": {
+            "convolution.default": 6422528
+        },
+        "layer2.0.downsample.0": {
+            "convolution.default": 6422528
+        },
+        "layer2.1": {
+            "convolution.default": 231211008
+        },
+        "layer2.1.conv1": {
+            "convolution.default": 115605504
+        },
+        "layer2.1.conv2": {
+            "convolution.default": 115605504
+        },
+        "layer3": {
+            "convolution.default": 411041792
+        },
+        "layer3.0": {
+            "convolution.default": 179830784
+        },
+        "layer3.0.conv1": {
+            "convolution.default": 57802752
+        },
+        "layer3.0.conv2": {
+            "convolution.default": 115605504
+        },
+        "layer3.0.downsample": {
+            "convolution.default": 6422528
+        },
+        "layer3.0.downsample.0": {
+            "convolution.default": 6422528
+        },
+        "layer3.1": {
+            "convolution.default": 231211008
+        },
+        "layer3.1.conv1": {
+            "convolution.default": 115605504
+        },
+        "layer3.1.conv2": {
+            "convolution.default": 115605504
+        },
+        "layer4": {
+            "convolution.default": 411041792
+        },
+        "layer4.0": {
+            "convolution.default": 179830784
+        },
+        "layer4.0.conv1": {
+            "convolution.default": 57802752
+        },
+        "layer4.0.conv2": {
+            "convolution.default": 115605504
+        },
+        "layer4.0.downsample": {
+            "convolution.default": 6422528
+        },
+        "layer4.0.downsample.0": {
+            "convolution.default": 6422528
+        },
+        "layer4.1": {
+            "convolution.default": 231211008
+        },
+        "layer4.1.conv1": {
+            "convolution.default": 115605504
+        },
+        "layer4.1.conv2": {
+            "convolution.default": 115605504
+        },
+        "fc": {
+            "addmm.default": 512000
+        }
+    },
+    "flops_backward": {
+        "": {
+            "mm.default": 1024000,
+            "convolution_backward.default": 3509108736
+        },
+        "fc": {
+            "mm.default": 1024000
+        },
+        "layer4": {
+            "convolution_backward.default": 822083584
+        },
+        "layer4.1": {
+            "convolution_backward.default": 462422016
+        },
+        "layer4.1.conv2": {
+            "convolution_backward.default": 231211008
+        },
+        "layer4.1.conv1": {
+            "convolution_backward.default": 231211008
+        },
+        "layer4.0": {
+            "convolution_backward.default": 359661568
+        },
+        "layer4.0.downsample": {
+            "convolution_backward.default": 12845056
+        },
+        "layer4.0.downsample.0": {
+            "convolution_backward.default": 12845056
+        },
+        "layer4.0.conv2": {
+            "convolution_backward.default": 231211008
+        },
+        "layer4.0.conv1": {
+            "convolution_backward.default": 115605504
+        },
+        "layer3": {
+            "convolution_backward.default": 822083584
+        },
+        "layer3.1": {
+            "convolution_backward.default": 462422016
+        },
+        "layer3.1.conv2": {
+            "convolution_backward.default": 231211008
+        },
+        "layer3.1.conv1": {
+            "convolution_backward.default": 231211008
+        },
+        "layer3.0": {
+            "convolution_backward.default": 359661568
+        },
+        "layer3.0.downsample": {
+            "convolution_backward.default": 12845056
+        },
+        "layer3.0.downsample.0": {
+            "convolution_backward.default": 12845056
+        },
+        "layer3.0.conv2": {
+            "convolution_backward.default": 231211008
+        },
+        "layer3.0.conv1": {
+            "convolution_backward.default": 115605504
+        },
+        "layer2": {
+            "convolution_backward.default": 822083584
+        },
+        "layer2.1": {
+            "convolution_backward.default": 462422016
+        },
+        "layer2.1.conv2": {
+            "convolution_backward.default": 231211008
+        },
+        "layer2.1.conv1": {
+            "convolution_backward.default": 231211008
+        },
+        "layer2.0": {
+            "convolution_backward.default": 359661568
+        },
+        "layer2.0.downsample": {
+            "convolution_backward.default": 12845056
+        },
+        "layer2.0.downsample.0": {
+            "convolution_backward.default": 12845056
+        },
+        "layer2.0.conv2": {
+            "convolution_backward.default": 231211008
+        },
+        "layer2.0.conv1": {
+            "convolution_backward.default": 115605504
+        },
+        "layer1": {
+            "convolution_backward.default": 924844032
+        },
+        "layer1.1": {
+            "convolution_backward.default": 462422016
+        },
+        "layer1.1.conv2": {
+            "convolution_backward.default": 231211008
+        },
+        "layer1.1.conv1": {
+            "convolution_backward.default": 231211008
+        },
+        "layer1.0": {
+            "convolution_backward.default": 462422016
+        },
+        "layer1.0.conv2": {
+            "convolution_backward.default": 231211008
+        },
+        "layer1.0.conv1": {
+            "convolution_backward.default": 231211008
+        },
+        "conv1": {
+            "convolution_backward.default": 118013952
+        }
+    }
+}

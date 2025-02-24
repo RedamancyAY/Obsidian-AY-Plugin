@@ -1,0 +1,4 @@
+MODEL:
+  one_stem: True
+  use_only_vocoder_stem: True
+  

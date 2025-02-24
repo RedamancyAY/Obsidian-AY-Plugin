@@ -1,0 +1,4 @@
+MODEL:
+  PhonemeGAT:
+    use_GAT: 0
+    use_aug: 0

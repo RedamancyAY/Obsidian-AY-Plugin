@@ -1,0 +1,4 @@
+MODEL:
+  one_stem: True
+  use_speed_loss_in_one_stem: True
+  use_compression_loss_in_one_stem: True

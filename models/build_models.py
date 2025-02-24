@@ -109,7 +109,10 @@ def make_model(cfg_file, cfg, args):
         from .OurModels.OursMultiView3 import MultiViewModel_lit
 
         model = MultiViewModel_lit(cfg=cfg.MODEL, args=args)
+    elif cfg_file.startswith("OursMultiView3D/"):
+        from .OurModels.MultiView3D import MultiView3DModel_lit
 
+        model = MultiView3DModel_lit(cfg=cfg.MODEL, args=args)
     elif cfg_file.startswith("OursCLIP/"):
         from .OursCLIP import OursCLIP_lit
 
@@ -123,6 +126,11 @@ def make_model(cfg_file, cfg, args):
 
         model = Phoneme_GAT_lit(cfg=cfg.MODEL, args=args)
 
+    elif cfg_file.startswith("OursRVQ/"):
+        from .OurModels.RVQ import RVQ_lit
+    
+        model = RVQ_lit(cfg=cfg.MODEL, args=args)
+    
     return model
 
 

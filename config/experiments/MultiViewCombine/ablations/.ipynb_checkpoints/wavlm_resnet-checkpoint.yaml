@@ -1,0 +1,4 @@
+MODEL:
+  MultiViewCombine:
+    model1D: 'wavlm'
+    model2D: 'resnet'

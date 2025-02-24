@@ -1,0 +1,4 @@
+MODEL:
+  MultiViewCombine:
+    model1D: 'rawnet'
+    model2D: 'resnet'

@@ -1,0 +1,4 @@
+MODEL:
+  PhonemeGAT:
+    use_pool: 0
+    use_clip: 0

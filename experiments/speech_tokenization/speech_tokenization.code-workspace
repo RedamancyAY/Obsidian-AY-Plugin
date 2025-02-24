@@ -1,0 +1,24 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../../models/OurModels/textless"
+		},
+		{
+			"path": "../../../../Packages/ay2/visualization"
+		}
+	],
+	"settings": {},
+	"tasks": {
+		"version": "2.0.0",
+		"tasks": [
+			{
+				"label": "echo",
+				"type": "shell",
+				"command": "echo Hello"
+			}
+		]
+	}
+}

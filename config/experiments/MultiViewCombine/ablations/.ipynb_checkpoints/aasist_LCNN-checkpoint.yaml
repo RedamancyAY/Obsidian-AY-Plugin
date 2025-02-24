@@ -1,0 +1,4 @@
+MODEL:
+  MultiViewCombine:
+    model1D: 'aasist'
+    model2D: 'LCNN'
