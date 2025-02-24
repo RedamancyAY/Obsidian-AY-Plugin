@@ -42,7 +42,8 @@ from ay2.datasets.audio import (
     MLAAD_AudioDs,
     VGGSound_AudioDs,
     WaveFake_AudioDs,
-    Codecfake_AudioDs
+    Codecfake_AudioDs,
+    ASVSpoof5_AudioDs
 )
 from ay2.tools import color_print
 from ay2.torch.transforms.audio import AudioRawBoost, SpecAugmentTransform_Wave
@@ -397,6 +398,18 @@ def make_Codecfake(cfg):
     return data_splits
 
 
+# ### ASVSpoof5
+
+def make_ASVSpoof5(cfg):
+    dataset = ASVSpoof5_AudioDs(root_path=cfg.root_path)
+    data_splits = dataset.get_splits(
+        train_val_rate_in_train_tsv=cfg.train_val_rate_in_train_tsv,
+        use_dev_as_test=cfg.use_dev_as_test, 
+        use_both_dev_test_for_test=cfg.use_both_dev_test_for_test
+    )
+    return data_splits
+
+
 # ## Dict
 
 MAKE_DATASETS = {
@@ -409,6 +422,7 @@ MAKE_DATASETS = {
     "VGGSound": make_VGGSound,
     "MLAAD": make_MLAAD,
     "Codecfake": make_Codecfake,
+    "ASVSpoof5": make_ASVSpoof5
 }
 
 

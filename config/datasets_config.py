@@ -39,7 +39,8 @@ ROOT_PATHs = NameCfgNode(
     ASV2019_LA = "/home/ay/data/0-原始数据集/ASV2019",
     VGGSound = "/home/ay/data/DATA/2-datasets/4-audio/VGGSound",
     MLAAD = "/home/ay/data/0-原始数据集/MLADD",
-    Codecfake = "/home/ay/data2/Codecfake16k"
+    Codecfake = "/home/ay/data2/Codecfake16k",
+    ASVSpoof5 = "/home/ay/data2/datasets/ASVSpoof5"
 )
 
 # ### WaveFake
@@ -201,6 +202,23 @@ def Codecfake(task=None):
     return C
 
 
+# ## ASVSpoof5
+
+def ASVSpoof5(task=None):
+    C = ConfigurationNode()
+    C.ROOT_PATHs = ROOT_PATHs
+    C.root_path = ROOT_PATHs.ASVSpoof5
+    C.task = task
+    
+    if task == "inner_eval":
+        C.train_val_rate_in_train_tsv=0.8
+        C.use_dev_as_test = False
+        C.use_both_dev_test_for_test=True
+    else:
+        raise ValueError("Error task name for ASVSpoof5, expect ['inner_eval'], but got {}".format(task))
+    return C
+
+
 # # Settings
 
 DATASETs = {
@@ -213,6 +231,7 @@ DATASETs = {
     'VGGSound' : VGGSound,
     'MLAAD' : MLAAD,
     'Codecfake' : Codecfake,
+    'ASVSpoof5' : ASVSpoof5
 }
 
 
